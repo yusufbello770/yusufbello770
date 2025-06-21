@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Network Health Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .stat-card { background: #f8f9fa; padding: 15px; border-radius: 4px; text-align: center; }
+        .critical { color: #dc3545; }
+        .high { color: #fd7e14; }
+        .medium { color: #ffc107; }
+        .suspicious { color: #0dcaf0; }
+    </style>
+</head>
+<body>
+    <h1>Network Health Dashboard</h1>
+    <a href="/"><button>Back to Controls</button></a>
+    
+    <div class="dashboard">
+        <div class="card">
+            <h2>Traffic Overview (Last 5 min)</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Packets</h3>
+                    <p>{{ stats.packet_count }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Current Rate</h3>
+                    <p>{{ stats.current_rate }} pps</p>
+                    {% if stats.baseline %}
+                    <small>Baseline: {{ stats.baseline.mean|round(1) }}±{{ stats.baseline.std|round(1) }}</small>
+                    {% endif %}
+                </div>
+                <div class="stat-card">
+                    <h3>Anomalies</h3>
+                    <p>{{ stats.anomalies.get('critical', 0) }} <span class="critical">●</span></p>
+                    <p>{{ stats.anomalies.get('high', 0) }} <span class="high">●</span></p>
+                    <p>{{ stats.anomalies.get('medium', 0) }} <span class="medium">●</span></p>
+                    <p>{{ stats.anomalies.get('suspicious', 0) }} <span class="suspicious">●</span></p>
+                </div>
+            </div>
+            
+            <h3>Protocol Distribution</h3>
+            <canvas id="protocolChart" width="400" height="200"></canvas>
+        </div>
+        
+        <div class="card">
+            <h2>Top Talkers</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h3>Top Sources</h3>
+                    <ul>
+                        {% for source, count in stats.top_sources %}
+                        <li>{{ source }}: {{ count }} packets</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div>
+                    <h3>Top Destinations</h3>
+                    <ul>
+                        {% for dest, count in stats.top_destinations %}
+                        <li>{{ dest }}: {{ count }} packets</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <h3>Traffic Rate</h3>
+            <canvas id="rateChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Protocol Distribution Chart
+        const protocolCtx = document.getElementById('protocolChart').getContext('2d');
+        const protocolData = {
+            labels: {{ stats.protocols.keys()|list|tojson }},
+            datasets: [{
+                label: 'Protocol Distribution',
+                data: {{ stats.protocols.values()|list }},
+                backgroundColor: [
+                    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'
+                ]
+            }]
+        };
+        new Chart(protocolCtx, {
+            type: 'doughnut',
+            data: protocolData
+        });
+        
+        // Traffic Rate Chart (simplified)
+        const rateCtx = document.getElementById('rateChart').getContext('2d');
+        new Chart(rateCtx, {
+            type: 'line',
+            data: {
+                labels: ['-5m', '-4m', '-3m', '-2m', '-1m', 'Now'],
+                datasets: [{
+                    label: 'Packets/sec',
+                    data: [120, 135, 140, 180, 210, {{ stats.current_rate }}],
+                    borderColor: '#4e73df',
+                    tension: 0.3
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
