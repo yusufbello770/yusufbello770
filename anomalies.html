@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detected Anomalies</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .critical { background-color: #ffcccc; }
+        .high { background-color: #ffe6cc; }
+        .medium { background-color: #ffffcc; }
+        .suspicious { background-color: #e6f2ff; }
+    </style>
+</head>
+<body>
+    <h1>Detected Network Anomalies</h1>
+    <a href="/"><button>Back to Dashboard</button></a>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Type</th>
+                <th>Source</th>
+                <th>Severity</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for anomaly in anomalies %}
+            <tr class="{{ anomaly.severity }}">
+                <td>{{ anomaly.timestamp | datetimeformat }}</td>
+                <td>{{ anomaly.type }}</td>
+                <td>{{ anomaly.source }}</td>
+                <td>{{ anomaly.severity }}</td>
+                <td>{{ anomaly.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
