@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Packet Sniffer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .control-panel {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        select, input, button {
+            padding: 8px;
+            margin: 5px 0;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: #cccccc;
+        }
+        #status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .active {
+            background: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <h1>Network Packet Sniffer</h1>
+    
+    <div class="control-panel">
+        <h2>Capture Controls</h2>
+        <form id="sniffingForm">
+            <div>
+                <label for="interface">Network Interface:</label>
+                <select id="interface" name="interface" required>
+                    {% for iface in interfaces %}
+                    <option value="{{ iface.name }}">{{ iface.display_name }} ({{ iface.ip }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="filter">BPF Filter (optional):</label>
+                <input type="text" id="filter" name="filter" placeholder="e.g., tcp port 80">
+            </div>
+            <div>
+                <button type="button" id="startBtn">Start Sniffing</button>
+                <button type="button" id="stopBtn" disabled>Stop Sniffing</button>
+            </div>
+            <div id="status"></div>
+        </form>
+    </div>
+
+    <div>
+        <h2>Captured Packets</h2>
+        <a href="/capture"><button>View Captured Packets</button></a>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusDiv = document.getElementById('status');
+        const form = document.getElementById('sniffingForm');
+
+        startBtn.addEventListener('click', async () => {
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('/start_sniffing', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    statusDiv.textContent = data.message;
+                    statusDiv.className = 'active';
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                } else {
+                    statusDiv.textContent = data.message;
+                    statusDiv.className = 'error';
+                }
+            } catch (error) {
+                statusDiv.textContent = 'Error: ' + error.message;
+                statusDiv.className = 'error';
+            }
+        });
+
+        stopBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/stop_sniffing', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    statusDiv.textContent = data.message;
+                    statusDiv.className = '';
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+            } catch (error) {
+                statusDiv.textContent = 'Error: ' + error.message;
+                statusDiv.className = 'error';
+            }
+        });
+    </script>
+</body>
+</html>
