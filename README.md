@@ -60,7 +60,7 @@ A secure, Flask-based web platform that enables online voting, election manageme
 - 📧 Email: [yusufbello770@gmail.com](mailto:yusufbello770@gmail.com)  
 - 💼 LinkedIn: [linkedin.com/in/beloyusuf](https://linkedin.com/in/beloyusuf)  
 - 🐦 Twitter: [twitter.com/beloyusufalani](https://twitter.com/beloyusufalani)  
-- 🌍 Portfolio: *Coming Soon*
+- 🌍 Portfolio: *yusufbe.vercel.app*
 
 ---
 
