@@ -1,4 +1,3 @@
-## Hi there 👋
 # 👋 Hi, I'm Yusuf Bello
 
 A passionate **Network Engineer**, **Cybersecurity Specialist**, and **Python Developer** from Nigeria. I design, build, and secure networks and systems using real-world tools and technologies. I also enjoy automating IT operations and creating custom security and monitoring tools.
@@ -58,8 +57,8 @@ A secure, Flask-based web platform that enables online voting, election manageme
 ## 📫 Contact Me
 
 - 📧 Email: [yusufbello770@gmail.com](mailto:yusufbello770@gmail.com)  
-- 💼 LinkedIn: [linkedin.com/in/beloyusuf](https://linkedin.com/in/beloyusuf)  
-- 🐦 Twitter: [twitter.com/beloyusufalani](https://twitter.com/beloyusufalani)  
+- 💼 LinkedIn: [linkedin.com/in/beloyusuf](https://linkedin.com/in/bello-yusuf)  
+- 🐦 Twitter: [twitter.com/beloyusufalani](https://twitter.com/belloyusufalani)  
 - 🌍 Portfolio: *yusufbe.vercel.app*
 
 ---
